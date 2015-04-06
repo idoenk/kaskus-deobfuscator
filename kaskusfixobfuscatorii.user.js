@@ -161,8 +161,10 @@ v0.1   : First release
         "pocongk+": "pocong",
         "indo\\*web\\*ster\\.\\.":"indowebster",
         "\\*Forbidden\\*": ".co.cc",
-        "http:\\/\\/(?:www|m)\\.kaskus\\.co\\.id\\/redirect\\?url=": "",
     };
+
+    if( !gvar.confirm_redirect )
+        replacements["http:\\/\\/(?:www|m)\\.kaskus\\.co\\.id\\/redirect\\?url="] = "";
     
     // reusable func to perform & manipulating in wildcard links or data value 
     var fixme = function(s){
