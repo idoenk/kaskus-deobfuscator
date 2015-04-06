@@ -223,7 +223,7 @@ v0.1   : First release
         s = fixme( decodeURI( node.href ) );
 
         if( !gvar.confirm_redirect && /\.kaskus\.co\.id\/redirect\?/i.test(node.href) ){
-            var newNode, parentNode, attr = {};
+            var newNode, parentNode, oldinner, inner, attr = {};
             parentNode = node.parentNode;
             if( !parentNode ) continue;
             
@@ -232,7 +232,12 @@ v0.1   : First release
 
             attr.href = s;
             attr.class = 'external-link-deobfuscated';
-            newNode = createEl('a', attr, s);
+
+            // decission whether to replace innerText of node
+            oldinner = node.firstChild.nodeValue;
+            inner = ( /^(?:http|ftp)s?\:\/\//.test(oldinner) && /\.{3}/.test(oldinner)  ? s : node.firstChild.nodeValue);
+
+            newNode = createEl('a', attr, inner);
             parentNode.replaceChild(newNode, node);
         }
         else{
