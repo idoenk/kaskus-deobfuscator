@@ -15,6 +15,7 @@
 // @include       *.kaskus.co.id/newthread.php?*
 // @include       *.kaskus.co.id/blog.php?*
 // @include       *.kaskus.co.id/group.php?*
+// @run-at         document-end
 // ==/UserScript==
 /*
 Kaskus Fix-ObfuscatorII 
@@ -184,7 +185,7 @@ v0.1   : First release
     for (key in replacements) 
         regex[key] = new RegExp(key, 'gi');
         
-        
+    
     /**
     * Retrieve the text nodes. 
     *  default: //body//text()
@@ -194,7 +195,7 @@ v0.1   : First release
     // thenodes = document.evaluate('//body//text()', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
     clog("scanning stage-1: "+thenodes.snapshotLength+" nodes");
-    
+
     // Perform a replacement over all the nodes
     for (var i = 0; i < thenodes.snapshotLength; i++) {
         node = thenodes.snapshotItem(i);
@@ -230,6 +231,7 @@ v0.1   : First release
                 attr[atts[i].nodeName] = atts[i].nodeValue;
 
             attr.href = s;
+            attr.class = 'external-link-deobfuscated';
             newNode = createEl('a', attr, s);
             parentNode.replaceChild(newNode, node);
         }
@@ -248,16 +250,16 @@ v0.1   : First release
         return node;
     }
     
-// ----my ge-debug--------
-function show_alert(msg, force) {
-  if(arguments.callee.counter) { arguments.callee.counter++; } else { arguments.callee.counter=1; }
-  GM_log('('+arguments.callee.counter+') '+msg);
-  if(force==0) { return; }
-}
-function clog(msg) {
-  if(!gvar.__DEBUG__) return;
-  show_alert(msg);
-}
+    // ----my ge-debug--------
+    function show_alert(msg, force) {
+      if(arguments.callee.counter) { arguments.callee.counter++; } else { arguments.callee.counter=1; }
+      GM_log('('+arguments.callee.counter+') '+msg);
+      if(force==0) { return; }
+    }
+    function clog(msg) {
+      if(!gvar.__DEBUG__) return;
+      show_alert(msg);
+    }
 
-    
+
 })();
