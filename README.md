@@ -21,7 +21,6 @@ Or in mobile mode:
 
  http://m.kaskus.co.id/thread/508f295ae674b4645e000009/hermawan-tes-script
 <br/>
-<br/>
 ---
 
 Oldname: Kaskus Fix-ObfuscatorII 
@@ -31,4 +30,5 @@ Tempat diskusi    : daftar kata kata yang disensor oleh Kaskus [Cekidot Gan!!!](
                     [:: All About Mozilla Firefox (Add-ons, Scripts, Fans Club) ::](http://www.kaskus.co.id/thread/000000000000000016414069/all-about-mozilla-firefox-add-ons-scripts-fans-club--part-3)
 
 Skrip ini bertujuan mengembalikan semua kata-kata yang disensor pada situs KasKus.co.id (misal: "rapid&#42;share") menjadi sediakala.
+
 This script replaces all obfuscated words in kaskus (e.g., "rapid&#42;share") and replaces it with the unobfuscated word.
