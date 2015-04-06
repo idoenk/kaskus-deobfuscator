@@ -13,8 +13,11 @@ Kaskus Deobfuscator is a userscript which de-obfuscates words 'censored' by kask
 </table>
 
 Check directly to test-page:
+
  http://www.kaskus.co.id/thread/508f295ae674b4645e000009/hermawan-tes-script
+ 
 Or in mobile mode:
+
  http://m.kaskus.co.id/thread/508f295ae674b4645e000009/hermawan-tes-script
 <br/>
 <br/>
