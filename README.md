@@ -1,5 +1,16 @@
 # Kaskus Deobfuscator
-Kaskus Deobfuscator is a userscript which de-obfuscates words 'censored' by kaskus + antibetmen
+Kaskus Deobfuscator is a userscript which de-obfuscates words 'censored' by kaskus
+
+<table>
+<tr>
+ <th>Before</th>
+ <th>After</th>
+</tr>
+<tr>
+ <td>![Before Fix-ObfuscatorII](https://dl.dropboxusercontent.com/u/33009152/deobfuscator/ss-deobf-before-min.png)</td>
+ <td>![After Fix-ObfuscatorII](https://dl.dropboxusercontent.com/u/33009152/deobfuscator/ss-deobf-after-min.png)</td>
+</tr>
+</table>
 
 ---
 
