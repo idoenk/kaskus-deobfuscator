@@ -3,7 +3,7 @@
 // @namespace     http://userscripts.org/scripts/show/90164
 // @description   De-obfuscates words 'censored' by kaskus + antibetmen
 // @author        hermawanadhis, idx
-// @version       0.7.5
+// @version       0.7.5.1
 // @include       *.kaskus.co.id/thread/*
 // @include       *.kaskus.co.id/lastpost/*
 // @include       *.kaskus.co.id/post/*
@@ -28,6 +28,8 @@ Skrip ini bertujuan mengembalikan semua kata-kata yang disensor pada situs KasKu
 This script replaces all obfuscated words in kaskus (e.g., "rapid*share") and replaces it with the unobfuscated word.
 Changelog:
 ------------
+0.7.5.1
+- decission whether to replace innerText of node
 0.7.5
 - deprecate fixing CODE on nodes
 - deprecate anti-batman; site already avoid abusive use of spoiler inside link;
