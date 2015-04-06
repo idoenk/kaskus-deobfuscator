@@ -140,9 +140,10 @@ v0.1   : First release
 (function () {
     
     var gvar = function(){};
-    gvar.__DEBUG__ = 2;
+    gvar.__DEBUG__ = 0;
 
     // disable kaskus confirmation dialog on external links
+    // set true to enable kaskus confirmation dialog of redirect link
     gvar.confirm_redirect = false;
 
 
