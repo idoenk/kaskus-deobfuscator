@@ -3,7 +3,7 @@
 // @namespace     http://userscripts.org/scripts/show/90164
 // @description   De-obfuscates words 'censored' by kaskus + antibetmen
 // @author        hermawanadhis, idx
-// @version       0.7.4.3
+// @version       0.7.5
 // @include       *.kaskus.co.id/thread/*
 // @include       *.kaskus.co.id/lastpost/*
 // @include       *.kaskus.co.id/post/*
@@ -27,6 +27,10 @@ Skrip ini bertujuan mengembalikan semua kata-kata yang disensor pada situs KasKu
 This script replaces all obfuscated words in kaskus (e.g., "rapid*share") and replaces it with the unobfuscated word.
 Changelog:
 ------------
+0.7.5
+- deprecate fixing CODE on nodes
+- deprecate anti-batman; site already avoid abusive use of spoiler inside link;
+- fix get rid confirmation dialog of redirect links
 0.7.4.3
 - fix evaluate link contains https
 - pre-check text optimized
@@ -136,7 +140,12 @@ v0.1   : First release
 (function () {
     
     var gvar = function(){};
-    gvar.__DEBUG__ = 0;
+    gvar.__DEBUG__ = 2;
+
+    // disable kaskus confirmation dialog on external links
+    gvar.confirm_redirect = false;
+
+
     
     var replacements, lreplacements, regex, lregex, thenodes, node, s;
 
@@ -151,6 +160,7 @@ v0.1   : First release
         "pocongk+": "pocong",
         "indo\\*web\\*ster\\.\\.":"indowebster",
         "\\*Forbidden\\*": ".co.cc",
+        "http:\\/\\/(?:www|m)\\.kaskus\\.co\\.id\\/redirect\\?url=": "",
     };
     
     // reusable func to perform & manipulating in wildcard links or data value 
@@ -172,8 +182,15 @@ v0.1   : First release
         regex[key] = new RegExp(key, 'gi');
         
         
-    // Now, retrieve the text nodes. default: //body//text()
-    thenodes = document.evaluate('//body//text()', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    /**
+    * Retrieve the text nodes. 
+    *  default: //body//text()
+    *  enhanced: //*[contains(@class,"entry-body") or contains(@class,"entry-content") ]//text()
+    */
+    thenodes = document.evaluate('//*[contains(@class,"entry-body") or contains(@class,"entry-content") ]//text()', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    // thenodes = document.evaluate('//body//text()', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+
+    clog("scanning stage-1: "+thenodes.snapshotLength+" nodes");
     
     // Perform a replacement over all the nodes
     for (var i = 0; i < thenodes.snapshotLength; i++) {
@@ -190,9 +207,10 @@ v0.1   : First release
 
     // Now, retrieve the A nodes. default: //a
     // Optimized, we just need all this specified href links
-    thenodes = document.evaluate('//a[contains(@href,"\:\/\/") and not(contains(@href,"\.kaskus\.co\.id")) and not(contains(@href,"\.kaskusnetworks\.com\/"))]',
+    thenodes = document.evaluate('//a[contains(@href,"\:\/\/") and not(contains(@href,"\.kaskusnetworks\.com\/"))]',
                document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
+    clog("scanning stage-2: "+thenodes.snapshotLength+" links");
     // Finally, perform a replacement over all A nodes
     for (var i = 0; i < thenodes.snapshotLength; i++) {
         node = thenodes.snapshotItem(i);
@@ -200,51 +218,24 @@ v0.1   : First release
         // Here's the key! We must replace the "href" instead of the "data"
         s = fixme( decodeURI( node.href ) );
 
-        // fix defect parser on last link inside code
-        /\[\/CODE\]$/.test( s ) && ( s = s.replace(/\[\/CODE\]$/, '') );
-        node.href = s;
-    }
-    
-    
-    var isBatman = function(inner){
-        return ( inner.match(/<div\s*class="spoiler">/i));
-    }, 
-    newHref = function(href){
-        var a = createEl('span', {'rel':href, 'title' : 'Goto ' + href, 'class':'smallfont','style':'color:red; cursor:pointer; margin-left:10px;', 'target':'_blank'}, 'Hidden Link &gt;&gt; '+href );
-        a.addEventListener('click', function(e){
-            e=e.target||e; e.style.color='black'
-            var newWindow = window.open(e.getAttribute('rel'), '_blank');
-            newWindow.focus(); return false;
-        }, true);
-        return a; 
-    };
-    
-    var pnode, pnodes;
-    // perform anti-batman @container id
-    pnodes = document.evaluate("//*[@class='entry']", document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+        if( !gvar.confirm_redirect && /\.kaskus\.co\.id\/redirect\?/i.test(node.href) ){
+            var newNode, parentNode, attr = {};
+            parentNode = node.parentNode;
+            if( !parentNode ) continue;
+            
+            for (var i = 0, atts = node.attributes, n = atts.length; i < n; i++)
+                attr[atts[i].nodeName] = atts[i].nodeValue;
 
-    if(pnodes.snapshotLength > 0) for (var i = 0; i < pnodes.snapshotLength; i++) {
-        pnode = pnodes.snapshotItem(i);        
-        thenodes = document.evaluate(".//a", pnode, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-
-        if(thenodes.snapshotLength >0 ) for (var j = 0; j < thenodes.snapshotLength; j++) {
-            node = thenodes.snapshotItem(j);
-
-            if( isBatman(node.innerHTML) ){
-               
-                 var inps, inerDiv = node.getElementsByTagName('div');
-                 if(inerDiv){
-                    inps = inerDiv[0].getElementsByTagName('input');
-                    if(inps.length)
-                        inps[0].parentNode.appendChild( newHref(node.href) );                
-                }
-                node.removeAttribute('href');
-            }else if(/^(?:ftps?|https?)\:\/\/.+(\.\.\.).+/.test(node.innerHTML)){ // full linkify
-               node.innerHTML = decodeURI(node.href);
-            }
+            attr.href = s;
+            newNode = createEl('a', attr, s);
+            parentNode.replaceChild(newNode, node);
+        }
+        else{
+            node.href = s;
         }
     }
-    //
+
+
 
     function createEl(type, attrArray, html) {
         var node = document.createElement(type);
@@ -253,7 +244,6 @@ v0.1   : First release
         if (html) node.innerHTML = html;
         return node;
     }
-    //
     
 // ----my ge-debug--------
 function show_alert(msg, force) {
