@@ -7,8 +7,8 @@ Kaskus Deobfuscator is a userscript which de-obfuscates words 'censored' by kask
  <th>After</th>
 </tr>
 <tr>
- <td>![Before Fix-ObfuscatorII](https://dl.dropboxusercontent.com/u/33009152/deobfuscator/ss-deobf-before-min.png)</td>
- <td>![After Fix-ObfuscatorII](https://dl.dropboxusercontent.com/u/33009152/deobfuscator/ss-deobf-after-min.png)</td>
+ <td><img alt="Before Fix-ObfuscatorII" src="https://dl.dropboxusercontent.com/u/33009152/deobfuscator/ss-deobf-before-min.png"/></td>
+ <td><img alt="After Fix-ObfuscatorII" src="https://dl.dropboxusercontent.com/u/33009152/deobfuscator/ss-deobf-after-min.png"/></td>
 </tr>
 </table>
 
