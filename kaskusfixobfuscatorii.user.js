@@ -153,7 +153,7 @@ v0.1   : First release
 
 
     
-    var replacements, lreplacements, regex, lregex, thenodes, node, s;
+    var replacements, regex, thenodes, node, s;
 
     // You can customize the script by adding new pairs of words.
     // First, let's build the "obfuscated":"de-obfuscated" words list
@@ -183,6 +183,14 @@ v0.1   : First release
             s = s.replace(/\.{2,}(com|net|in|to|ly)\b/g, '.$1' );
 
         return s;
+    }, innerExpand = function(s, node, nodeTarget){
+        var innerNV;
+        // maintain expanded link innerText when it possible
+        if( node.firstChild.nodeName == '#text' && (innerNV = node.firstChild.nodeValue) ){
+            if( /^(?:http|ftp)s?\:\/\//.test(innerNV) && /\.{3}/.test(innerNV) )
+                nodeTarget.firstChild.nodeValue = s;
+        }
+        return nodeTarget;
     };
     
     regex = {};
@@ -236,17 +244,13 @@ v0.1   : First release
             
             // by changing class, should avoid events click is given to show popup
             clNode.setAttribute("class", 'external-link-deobfuscated');
-
-            // maintain expanded link innerText when it possible
-            if( node.firstChild.nodeName == '#text' && (innerNV = node.firstChild.nodeValue) ){
-                if( /^(?:http|ftp)s?\:\/\//.test(innerNV) && /\.{3}/.test(innerNV) )
-                    clNode.firstChild.nodeValue = s;
-            }
+            clNode = innerExpand(s, node, clNode);
 
             parentNode.replaceChild(clNode, node);
         }
         else{
             node.href = s;
+            node = innerExpand(s, node, node);
         }
     }
 
