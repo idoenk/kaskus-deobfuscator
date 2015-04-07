@@ -227,7 +227,7 @@ v0.1   : First release
         s = fixme( decodeURI( node.href ) );
 
         if( !gvar.confirm_redirect && /\.kaskus\.co\.id\/redirect\?/i.test(node.href) ){
-            var clNode, parentNode;
+            var clNode, parentNode, innerNV;
             parentNode = node.parentNode;
             if( !parentNode ) continue;
             
@@ -236,6 +236,12 @@ v0.1   : First release
             
             // by changing class, should avoid events click is given to show popup
             clNode.setAttribute("class", 'external-link-deobfuscated');
+
+            // maintain expanded link innerText when it possible
+            if( node.firstChild.nodeName == '#text' && (innerNV = node.firstChild.nodeValue) ){
+                if( /^(?:http|ftp)s?\:\/\//.test(innerNV) && /\.{3}/.test(innerNV) )
+                    clNode.firstChild.nodeValue = s;
+            }
 
             parentNode.replaceChild(clNode, node);
         }
