@@ -3,7 +3,7 @@
 // @namespace     http://userscripts.org/scripts/show/90164
 // @description   De-obfuscates words 'censored' by kaskus + antibetmen
 // @author        hermawanadhis, idx
-// @version       0.7.5.1
+// @version       0.7.5.2
 // @include       *.kaskus.co.id/thread/*
 // @include       *.kaskus.co.id/lastpost/*
 // @include       *.kaskus.co.id/post/*
@@ -28,6 +28,8 @@ Skrip ini bertujuan mengembalikan semua kata-kata yang disensor pada situs KasKu
 This script replaces all obfuscated words in kaskus (e.g., "rapid*share") and replaces it with the unobfuscated word.
 Changelog:
 ------------
+0.7.5.2
+- Fix failure replacing elements;
 0.7.5.1
 - decission whether to replace innerText of node
 0.7.5
@@ -225,22 +227,17 @@ v0.1   : First release
         s = fixme( decodeURI( node.href ) );
 
         if( !gvar.confirm_redirect && /\.kaskus\.co\.id\/redirect\?/i.test(node.href) ){
-            var newNode, parentNode, oldinner, inner, attr = {};
+            var clNode, parentNode;
             parentNode = node.parentNode;
             if( !parentNode ) continue;
             
-            for (var i = 0, atts = node.attributes, n = atts.length; i < n; i++)
-                attr[atts[i].nodeName] = atts[i].nodeValue;
+            clNode = node.cloneNode(true);
+            clNode.setAttribute("href", s);
+            
+            // by changing class, should avoid events click is given to show popup
+            clNode.setAttribute("class", 'external-link-deobfuscated');
 
-            attr.href = s;
-            attr.class = 'external-link-deobfuscated';
-
-            // decission whether to replace innerText of node
-            oldinner = node.firstChild.nodeValue;
-            inner = ( /^(?:http|ftp)s?\:\/\//.test(oldinner) && /\.{3}/.test(oldinner)  ? s : node.firstChild.nodeValue);
-
-            newNode = createEl('a', attr, inner);
-            parentNode.replaceChild(newNode, node);
+            parentNode.replaceChild(clNode, node);
         }
         else{
             node.href = s;
