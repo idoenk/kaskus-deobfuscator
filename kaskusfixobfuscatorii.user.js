@@ -3,12 +3,14 @@
 // @namespace     http://userscripts.org/scripts/show/90164
 // @description   De-obfuscates words 'censored' by kaskus + antibetmen
 // @author        hermawanadhis, idx
-// @version       0.7.5.2
+// @version       0.7.5.3
 // @include       *.kaskus.co.id/thread/*
 // @include       *.kaskus.co.id/lastpost/*
 // @include       *.kaskus.co.id/post/*
 // @include       *.kaskus.co.id/show_post/*
 // @include       *.kaskus.co.id/edit_post/*
+// @include       *.kaskus.co.id/pm/*
+// @include       *.kaskus.co.id/group/discussion/*
 // @include       *.kaskus.co.id/showthread.php?*
 // @include       *.kaskus.co.id/showpost.php?*
 // @include       *.kaskus.co.id/editpost.php?*
@@ -28,6 +30,9 @@ Skrip ini bertujuan mengembalikan semua kata-kata yang disensor pada situs KasKu
 This script replaces all obfuscated words in kaskus (e.g., "rapid*share") and replaces it with the unobfuscated word.
 Changelog:
 ------------
+0.7.5.3
+- add @include [/pm/*, /group/discussion/*]
+- add xpath selector for pm, archive
 0.7.5.2
 - Fix failure replacing elements;
 0.7.5.1
@@ -186,7 +191,7 @@ v0.1   : First release
     }, innerExpand = function(s, node, nodeTarget){
         var innerNV;
         // maintain expanded link innerText when it possible
-        if( node.firstChild.nodeName == '#text' && (innerNV = node.firstChild.nodeValue) ){
+        if( node.firstChild && node.firstChild.nodeName == '#text' && (innerNV = node.firstChild.nodeValue) ){
             if( /^(?:http|ftp)s?\:\/\//.test(innerNV) && /\.{3}/.test(innerNV) )
                 nodeTarget.firstChild.nodeValue = s;
         }
@@ -203,8 +208,12 @@ v0.1   : First release
     *  default: //body//text()
     *  enhanced: //*[contains(@class,"entry-body") or contains(@class,"entry-content") ]//text()
     */
-    thenodes = document.evaluate('//*[contains(@class,"entry-body") or contains(@class,"entry-content") ]//text()', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-    // thenodes = document.evaluate('//body//text()', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+    thenodes = document.evaluate('//*['
+        +'contains(@class,"entry-body") or '    // thread:desktop
+        +'contains(@class,"entry-content") or ' // thread:mobile
+        +'contains(@class,"pagetext") or '      // thread-subdom:archive
+        +'contains(@class,"message-body")'      // pm
+        +']//text()', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 
     clog("scanning stage-1: "+thenodes.snapshotLength+" nodes");
 
