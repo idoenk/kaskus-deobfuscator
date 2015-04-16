@@ -3,7 +3,7 @@
 // @namespace     http://userscripts.org/scripts/show/90164
 // @description   De-obfuscates words 'censored' by kaskus + antibetmen
 // @author        hermawanadhis, idx
-// @version       0.7.5.3
+// @version       0.7.5.4
 // @include       *.kaskus.co.id/thread/*
 // @include       *.kaskus.co.id/lastpost/*
 // @include       *.kaskus.co.id/post/*
@@ -30,6 +30,8 @@ Skrip ini bertujuan mengembalikan semua kata-kata yang disensor pada situs KasKu
 This script replaces all obfuscated words in kaskus (e.g., "rapid*share") and replaces it with the unobfuscated word.
 Changelog:
 ------------
+0.7.5.4
+- patch unescape broken link
 0.7.5.3
 - add @include [/pm/*, /group/discussion/*]
 - add xpath selector for pm, archive
@@ -241,7 +243,7 @@ v0.1   : First release
         node = thenodes.snapshotItem(i);
 
         // Here's the key! We must replace the "href" instead of the "data"
-        s = fixme( decodeURI( node.href ) );
+        s = unescape( fixme( decodeURI( node.href ) ) );
 
         if( !gvar.confirm_redirect && /\.kaskus\.co\.id\/redirect\?/i.test(node.href) ){
             var clNode, parentNode, innerNV;
