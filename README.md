@@ -1,5 +1,5 @@
 # Kaskus Deobfuscator
-Kaskus Deobfuscator is a userscript which de-obfuscates words 'censored' by kaskus. 
+Kaskus Deobfuscator is a userscript which de-obfuscates words 'censored' by kaskus. This script can also remove poluted external links with redirect-link confirmation.
  <a class="btn btn-primary" href="kaskusfixobfuscatorii.user.js?raw=true"><img src="https://dl.dropboxusercontent.com/u/33009152/btn-install-min.png"/ alt="Install Script"></a>
 
 <table>
