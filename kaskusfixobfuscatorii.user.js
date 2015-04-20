@@ -3,7 +3,7 @@
 // @namespace     http://userscripts.org/scripts/show/90164
 // @description   De-obfuscates words 'censored' by kaskus + antibetmen
 // @author        hermawanadhis, idx
-// @version       0.7.5.4
+// @version       0.7.5.4.2
 // @include       *.kaskus.co.id/thread/*
 // @include       *.kaskus.co.id/lastpost/*
 // @include       *.kaskus.co.id/post/*
@@ -25,11 +25,14 @@ Dibuat oleh Pandu E Poluan {http://userscripts.org/users/71414/}
 Penghargaan kepada: Chaox, D3v1love, hermawanadhis (from 0.6.x), idx (http://code.google.com/p/dev-kaskus-quick-reply/), Piluze
 Tempat diskusi    : daftar kata kata yang disensor oleh Kaskus [Cekidot Gan!!!] - http://www.kaskus.co.id/thread/000000000000000004492393/daftar-kata-kata-yang-disensor-oleh-kaskus-cekidot-gan/ 
                   :: All About Mozilla Firefox (Add-ons, Scripts, Fans Club) :: - http://www.kaskus.co.id/thread/000000000000000016414069/all-about-mozilla-firefox-add-ons-scripts-fans-club--part-3/
-
 Skrip ini bertujuan mengembalikan semua kata-kata yang disensor pada situs KasKus.co.id (misal: "rapid*share") menjadi sediakala.
 This script replaces all obfuscated words in kaskus (e.g., "rapid*share") and replaces it with the unobfuscated word.
 Changelog:
 ------------
+0.7.5.4.2
+- patch for fjb.m redirect link
+0.7.5.4.1
+- patch for fjb redirect link
 0.7.5.4
 - patch unescape broken link
 0.7.5.3
@@ -148,20 +151,15 @@ v0.2   : Rewrites also obfuscated URLs
 v0.1.1 : Added 119.110.77.4 to be included
 v0.1   : First release
 */
-
 (function () {
     
     var gvar = function(){};
     gvar.__DEBUG__ = 0;
-
     // disable kaskus confirmation dialog on external links
     // set true to enable kaskus confirmation dialog of redirect link
     gvar.confirm_redirect = false;
-
-
     
     var replacements, regex, thenodes, node, s;
-
     // You can customize the script by adding new pairs of words.
     // First, let's build the "obfuscated":"de-obfuscated" words list
     // To prevent inadvertently using some regexp control modifiers,
@@ -174,9 +172,8 @@ v0.1   : First release
         "indo\\*web\\*ster\\.\\.":"indowebster",
         "\\*Forbidden\\*": ".co.cc",
     };
-
     if( !gvar.confirm_redirect )
-        replacements["http:\\/\\/(?:www|m)\\.kaskus\\.co\\.id\\/redirect\\?url="] = "";
+        replacements["http:\\/\\/(?:www|m|fjb|fjb\\.m)\\.kaskus\\.co\\.id\\/(.*)redirect\\?url="] = "";
     
     // reusable func to perform & manipulating in wildcard links or data value 
     var fixme = function(s){
@@ -188,7 +185,6 @@ v0.1   : First release
             
         if( /\w{3,}\.{2,}(?:com|net|in|to|ly)\b/i.test(s) )        
             s = s.replace(/\.{2,}(com|net|in|to|ly)\b/g, '.$1' );
-
         return s;
     }, innerExpand = function(s, node, nodeTarget){
         var innerNV;
@@ -216,9 +212,7 @@ v0.1   : First release
         +'contains(@class,"pagetext") or '      // thread-subdom:archive
         +'contains(@class,"message-body")'      // pm
         +']//text()', document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-
     clog("scanning stage-1: "+thenodes.snapshotLength+" nodes");
-
     // Perform a replacement over all the nodes
     for (var i = 0; i < thenodes.snapshotLength; i++) {
         node = thenodes.snapshotItem(i);
@@ -227,24 +221,19 @@ v0.1   : First release
         if(!(s && s.length>5 && /[\w\.]/i.test(s)
             && ['SCRIPT','STYLE'].indexOf(String(node.parentNode.nodeName)) === -1
         )) continue; // pre-check
-
         s = fixme( s );
         node.data = s;
     }
-
     // Now, retrieve the A nodes. default: //a
     // Optimized, we just need all this specified href links
     thenodes = document.evaluate('//a[contains(@href,"\:\/\/") and not(contains(@href,"\.kaskusnetworks\.com\/"))]',
                document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-
     clog("scanning stage-2: "+thenodes.snapshotLength+" links");
     // Finally, perform a replacement over all A nodes
     for (var i = 0; i < thenodes.snapshotLength; i++) {
         node = thenodes.snapshotItem(i);
-
         // Here's the key! We must replace the "href" instead of the "data"
         s = unescape( fixme( decodeURI( node.href ) ) );
-
         if( !gvar.confirm_redirect && /\.kaskus\.co\.id\/redirect\?/i.test(node.href) ){
             var clNode, parentNode, innerNV;
             parentNode = node.parentNode;
@@ -256,7 +245,6 @@ v0.1   : First release
             // by changing class, should avoid events click is given to show popup
             clNode.setAttribute("class", 'external-link-deobfuscated');
             clNode = innerExpand(s, node, clNode);
-
             parentNode.replaceChild(clNode, node);
         }
         else{
@@ -264,9 +252,6 @@ v0.1   : First release
             node = innerExpand(s, node, node);
         }
     }
-
-
-
     function createEl(type, attrArray, html) {
         var node = document.createElement(type);
         for (var attr in attrArray)
@@ -285,6 +270,4 @@ v0.1   : First release
       if(!gvar.__DEBUG__) return;
       show_alert(msg);
     }
-
-
 })();
