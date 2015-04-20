@@ -3,7 +3,7 @@
 // @namespace     http://userscripts.org/scripts/show/90164
 // @description   De-obfuscates words 'censored' by kaskus + antibetmen
 // @author        hermawanadhis, idx
-// @version       0.7.5.4.1
+// @version       0.7.5.4.2
 // @include       *.kaskus.co.id/thread/*
 // @include       *.kaskus.co.id/lastpost/*
 // @include       *.kaskus.co.id/post/*
@@ -29,6 +29,8 @@ Skrip ini bertujuan mengembalikan semua kata-kata yang disensor pada situs KasKu
 This script replaces all obfuscated words in kaskus (e.g., "rapid*share") and replaces it with the unobfuscated word.
 Changelog:
 ------------
+0.7.5.4.2
+- patch for fjb.m redirect link
 0.7.5.4.1
 - patch for fjb redirect link
 0.7.5.4
@@ -156,7 +158,6 @@ v0.1   : First release
     // disable kaskus confirmation dialog on external links
     // set true to enable kaskus confirmation dialog of redirect link
     gvar.confirm_redirect = false;
-
     
     var replacements, regex, thenodes, node, s;
     // You can customize the script by adding new pairs of words.
@@ -172,7 +173,7 @@ v0.1   : First release
         "\\*Forbidden\\*": ".co.cc",
     };
     if( !gvar.confirm_redirect )
-        replacements["http:\\/\\/(?:www|m|fjb|fjb.m)\\.kaskus\\.co\\.id\\/redirect\\?url="] = "";
+        replacements["http:\\/\\/(?:www|m|fjb|fjb\\.m)\\.kaskus\\.co\\.id\\/(.*)redirect\\?url="] = "";
     
     // reusable func to perform & manipulating in wildcard links or data value 
     var fixme = function(s){
@@ -251,7 +252,6 @@ v0.1   : First release
             node = innerExpand(s, node, node);
         }
     }
-
     function createEl(type, attrArray, html) {
         var node = document.createElement(type);
         for (var attr in attrArray)
@@ -270,5 +270,4 @@ v0.1   : First release
       if(!gvar.__DEBUG__) return;
       show_alert(msg);
     }
-
 })();
