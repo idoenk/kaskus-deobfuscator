@@ -31,4 +31,4 @@ Tempat diskusi    : daftar kata kata yang disensor oleh Kaskus [Cekidot Gan!!!](
 
 Skrip ini bertujuan mengembalikan semua kata-kata yang disensor pada situs KasKus.co.id (misal: "rapid&#42;share") menjadi sediakala.
 
-This script replaces all obfuscated words in kaskus (e.g., "rapid&#42;share") and replaces it with the unobfuscated word.
+This script replaces all obfuscated words in kaskus (e.g., "rapid&#42;share") and replaces it with the unobfuscated word..
